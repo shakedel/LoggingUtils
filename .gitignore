@@ -1,3 +1,5 @@
 manual.py
 venv
 .vscode
+dist
+MANIFEST
