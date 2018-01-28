@@ -2,7 +2,7 @@
 Setup script for LoggingUtils
 """
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='logging-utils',
