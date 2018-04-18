@@ -9,8 +9,10 @@ from logging.handlers import TimedRotatingFileHandler, RotatingFileHandler
 import os
 import errno
 
+
 # pylint: disable=too-many-ancestors
-class TimeOrSizeRotatingFileHandler(TimedRotatingFileHandler, RotatingFileHandler):
+class TimeOrSizeRotatingFileHandler(TimedRotatingFileHandler,
+                                    RotatingFileHandler):
     """
     A log handler that rotates when either a time or size limit is reached
     """
