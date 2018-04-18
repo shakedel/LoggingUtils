@@ -1,9 +1,13 @@
 
+
 """
 A log handler that rotates when either a time or size limit is reached
 """
+from logging import FileHandler
 from time import time, localtime
 from logging.handlers import TimedRotatingFileHandler, RotatingFileHandler
+import os
+import errno
 
 # pylint: disable=too-many-ancestors
 class TimeOrSizeRotatingFileHandler(TimedRotatingFileHandler, RotatingFileHandler):
@@ -57,3 +61,29 @@ class TimeOrSizeRotatingFileHandler(TimedRotatingFileHandler, RotatingFileHandle
         timed = TimedRotatingFileHandler.shouldRollover(self, record)
         size = RotatingFileHandler.shouldRollover(self, record)
         return timed or size
+
+
+
+def mkdir_p(path):
+    """http://stackoverflow.com/a/600612/190597 (tzot)"""
+    try:
+        os.makedirs(path, exist_ok=True)  # Python>3.2
+    except TypeError:
+        try:
+            os.makedirs(path)
+        except OSError as exc: # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else: raise
+
+
+class MakedirsFileHandler(FileHandler):
+    """
+    A log handler that creates all missing dirs in its path
+    https://stackoverflow.com/a/20667049/2261244 (unutbu)
+
+    """
+
+    def __init__(self, filename, mode='a', encoding=None, delay=0):
+        mkdir_p(os.path.dirname(filename))
+        FileHandler.__init__(self, filename, mode, encoding, delay)
