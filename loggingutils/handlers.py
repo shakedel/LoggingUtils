@@ -7,7 +7,6 @@ from logging import FileHandler
 from time import time, localtime
 from logging.handlers import TimedRotatingFileHandler, RotatingFileHandler
 import os
-import errno
 
 
 # pylint: disable=too-many-ancestors
@@ -65,20 +64,6 @@ class TimeOrSizeRotatingFileHandler(TimedRotatingFileHandler,
         return timed or size
 
 
-
-def mkdir_p(path):
-    """http://stackoverflow.com/a/600612/190597 (tzot)"""
-    try:
-        os.makedirs(path, exist_ok=True)  # Python>3.2
-    except TypeError:
-        try:
-            os.makedirs(path)
-        except OSError as exc: # Python >2.5
-            if exc.errno == errno.EEXIST and os.path.isdir(path):
-                pass
-            else: raise
-
-
 class MakedirsFileHandler(FileHandler):
     """
     A log handler that creates all missing dirs in its path
@@ -86,6 +71,10 @@ class MakedirsFileHandler(FileHandler):
 
     """
 
-    def __init__(self, filename, mode='a', encoding=None, delay=0):
-        mkdir_p(os.path.dirname(filename))
+    def __init__(self,
+                 filename: str,
+                 mode: str ='a',
+                 encoding=None,
+                 delay: bool = 0):
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         FileHandler.__init__(self, filename, mode, encoding, delay)
